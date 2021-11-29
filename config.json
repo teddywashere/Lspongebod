@@ -1,0 +1,30 @@
+{
+	"clientId": "",
+	"guildId": "",
+	"token": "",
+
+	"prefix": "",
+	"owner": "",
+
+	"modlogc": "",
+	"logsc": "",
+	"criminalsc": "",
+	"jailc": "",
+	"generalc": "",
+	"ticketsc": "",
+
+	"friendr": "",
+	"staffr": "",
+	"adminr": "",
+	"betar": "",
+
+	"muter": "",
+	"jailr": "",
+	"chatrevr": "",
+	"everyoner": "",
+
+	"template": "",
+	"opentickets": "",
+	"closedtickets": "",
+	"logger": ""
+}
