@@ -25,9 +25,9 @@ module.exports = {
 			// MEMBER
 			if (interaction.options.getSubcommand() === 'member') {
 
-				const member = interaction.options.getUser('target');
+				const member = await interaction.options.getUser('target');
 				const mem = await client.users.fetch(member.id);
-				const guildmem = interaction.guild.members.cache.get(member.id);
+				const guildmem = await interaction.guild.members.cache.get(member.id);
 
 				const memberembed = new Discord.MessageEmbed()
 					.setTitle(`Member info:`)
@@ -42,7 +42,7 @@ module.exports = {
 			// ID
 			if (interaction.options.getSubcommand() === 'id') {
 
-				const id = interaction.options.getString('id');
+				const id = await interaction.options.getString('id');
 				const user = await client.users.fetch(id);
 
 				const idembed = new Discord.MessageEmbed()
@@ -57,7 +57,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.reply({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.reply({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 	},
 };

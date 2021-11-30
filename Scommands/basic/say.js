@@ -10,7 +10,7 @@ module.exports = {
 		.addStringOption(option => option.setName('message').setDescription('The message you want me to send').setRequired(true)),
 	async execute(interaction) {
 		try {
-			interaction.reply({ content: `Typing...`, ephemeral: true });
+			await interaction.reply({ content: `Typing...`, ephemeral: true });
 
 			const message = await interaction.options.getString('message');
 			const logs = await interaction.guild.channels.cache.get(logsc);
@@ -30,7 +30,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 
 	},
