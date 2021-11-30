@@ -1,7 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
+const { Client, Intents } = require('discord.js');
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING] });
 
-const { modlogc, owner } = require('./../../config.json');
+const { modlogc, owner, token } = require('./../../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -22,6 +24,7 @@ module.exports = {
 
 			const me = await interaction.guild.members.cache.get(owner);
 			if (!modlog) await me.send(`${interaction.user} tried to use unban command in ${interaction.guild}\n**ERROR:**\nModlog not found`);
+			if (!client.users.cache.get(id)) return interaction.editReply({ content: `${id} is not a userId.`, ephemeral: true });
 			if (!banmap.get(id)) return interaction.editReply({ content:`This user is not banned.`, ephemeral: true });
 
 			// unban
@@ -47,3 +50,4 @@ module.exports = {
 
 	},
 };
+client.login(token);
