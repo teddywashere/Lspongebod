@@ -11,7 +11,7 @@ module.exports = {
 		.addUserOption(option => option.setName('target').setDescription('The member to arrest').setRequired(true)),
 	async execute(interaction) {
 		try {
-			interaction.reply({ content: `Arresting...`, ephemeral: true });
+			await interaction.reply({ content: `Arresting...`, ephemeral: true });
 
 			const target = await interaction.options.getUser('target');
 			const member = await interaction.guild.members.cache.get(target.id);
@@ -22,7 +22,7 @@ module.exports = {
 			const jail = await interaction.guild.channels.cache.get(jailc);
 
 			// error checks
-			const me = interaction.guild.members.cache.get(owner);
+			const me = await interaction.guild.members.cache.get(owner);
 			if (!friendr) await me.send(`${interaction.user} tried to use arrest command in ${interaction.guild}\n**ERROR:**\n Couldn't find friend role`).catch(O_o => console.log(O_o));
 			if (!modlog || !criminals || !jail) await me.send(`${interaction.user} tried to use arrest command in ${interaction.guild}\n**ERROR:**\n Couldn't find one of the required channels`).catch(O_o => console.log(O_o));
 
@@ -81,7 +81,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 
 	},

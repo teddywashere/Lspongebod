@@ -37,7 +37,7 @@ module.exports = {
 
 			// TARGET
 			if (interaction.options.getSubcommand() === 'target') {
-				interaction.reply({ content: `Banning...`, ephemeral: true });
+				await interaction.reply({ content: `Banning...`, ephemeral: true });
 				const target = await interaction.options.getUser('target');
 				const reason = await interaction.options.getString('reason');
 				const member = await interaction.guild.members.cache.get(target.id);
@@ -121,7 +121,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 
 	},

@@ -12,7 +12,7 @@ module.exports = {
 		.addStringOption(option => option.setName('reason').setDescription('Reason for unban').setRequired(true)),
 	async execute(interaction) {
 		try {
-			interaction.reply({ content: `Unbanning...`, ephemeral: true });
+			await interaction.reply({ content: `Unbanning...`, ephemeral: true });
 
 			const id = await interaction.options.getString('id');
 			const reason = await interaction.options.getString('reason');
@@ -42,7 +42,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 
 	},
