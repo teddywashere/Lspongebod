@@ -10,14 +10,14 @@ module.exports = {
 
 	async execute(interaction) {
 		try {
-			interaction.reply({ content: 'Backing up...', ephemeral: true });
-			const logs = interaction.guild.channels.cache.get(logsc);
-			const member = interaction.guild.members.cache.get(interaction.user.id);
+			await interaction.reply({ content: 'Backing up...', ephemeral: true });
+			const logs = await interaction.guild.channels.cache.get(logsc);
+			const member = await interaction.guild.members.cache.get(interaction.user.id);
 
 			const templates = await interaction.guild.fetchTemplates();
 			const backup = await templates.get(template);
 
-			const me = interaction.guild.members.cache.get(owner);
+			const me = await interaction.guild.members.cache.get(owner);
 			if (!logs || !member) await me.send(`${member} used the backup command in ${interaction.guild}\n**ERROR:**\nCouldn't find eihter the log channel or "member"`).catch(O_o => console.log(O_o));
 
 			if (backup) {
@@ -38,7 +38,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 
 	},
