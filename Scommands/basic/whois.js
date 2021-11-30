@@ -43,6 +43,7 @@ module.exports = {
 			if (interaction.options.getSubcommand() === 'id') {
 
 				const id = await interaction.options.getString('id');
+				if (!client.users.cache.get(id)) return interaction.reply({ content: `${id} is not a userId.`, ephemeral: true });
 				const user = await client.users.fetch(id);
 
 				const idembed = new Discord.MessageEmbed()
