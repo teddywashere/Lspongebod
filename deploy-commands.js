@@ -1,11 +1,12 @@
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { token, adminr, staffr, friendr, betar } = require('./config.json');
+const { token } = require('./config.json');
 const fs = require('fs');
 
+const { adminr, staffr, friendr } = require('./config.json');
 // Place your client and guild ids here
-const clientId = '';
-const guildId = '';
+const clientId = '825349710368997446';
+const guildId = '788794708087275550';
 
 const commands = [];
 const commandFolders = fs.readdirSync('./Scommands');
@@ -50,6 +51,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 		const unbanCommand = response.find(cmd => cmd.name === 'unban');
 		const unmuteCommand = response.find(cmd => cmd.name === 'unmute');
 		const closeCommand = response.find(cmd => cmd.name === 'close');
+		const renameCommand = response.find(cmd => cmd.name === 'rename');
 		const addroleCommand = response.find(cmd => cmd.name === 'addrole');
 		const embedCommand = response.find(cmd => cmd.name === 'embed');
 		const deleteCommand = response.find(cmd => cmd.name === 'delete');
@@ -195,6 +197,21 @@ const rest = new REST({ version: '9' }).setToken(token);
 				],
 			},
 			{
+				id: renameCommand.id,
+				permissions: [
+					{
+						id: staffr,
+						type: 1,
+						permission: true,
+					},
+					{
+						id: adminr,
+						type: 1,
+						permission: true,
+					},
+				],
+			},
+			{
 				id: addroleCommand.id,
 				permissions: [
 					{
@@ -219,11 +236,6 @@ const rest = new REST({ version: '9' }).setToken(token);
 					},
 					{
 						id: adminr,
-						type: 1,
-						permission: true,
-					},
-					{
-						id: betar,
 						type: 1,
 						permission: true,
 					},
@@ -341,6 +353,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 			{ body: fullPermissions },
 		);
 		console.log('Successfully applied permission overwrites.');
+
 	}
 	catch (error) {
 		console.error(error);
