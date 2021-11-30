@@ -45,6 +45,7 @@ module.exports = {
 				const id = await interaction.options.getString('id');
 				if (!client.users.fetch(id)) return interaction.reply({ content: `${id} is not a userId.`, ephemeral: true });
 				const user = await client.users.fetch(id);
+				const banmap = await interaction.guild.bans.fetch();
 
 				const idembed = new Discord.MessageEmbed()
 					.setTitle(`User info:`)
@@ -53,7 +54,19 @@ module.exports = {
 					.setColor('#00ffb6')
 					.setTimestamp();
 
-				return interaction.reply({ embeds: [idembed] });
+				await interaction.reply({ embeds: [idembed] });
+
+				if (banmap.get(id)) {
+					const banned = await banmap.get(id);
+					const bannedembed = new Discord.MessageEmbed()
+						.setTitle(`User info:`)
+						.setThumbnail(user.displayAvatarURL())
+						.setDescription(`_ _\n**User:** ${user}\n\n**Tag:** ${user.tag}\n\n**ID:** \`${user.id}\`\n\n**Account created:** ${user.createdAt}\n ${user.createdTimestamp}\n\n**This user is banned from this guild. Reason:**\n\`${banned.reason}\`\n_ _`)
+						.setColor('#00ffb6')
+						.setTimestamp();
+
+					await interaction.editReply({ embeds: [bannedembed] });
+				}
 			}
 		}
 		catch (error) {
