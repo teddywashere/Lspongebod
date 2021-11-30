@@ -96,7 +96,7 @@ module.exports = {
 				if (banmap.get(id)) return interaction.editReply({ content:`This user is already banned.`, ephemeral: true });
 
 				// ban
-				await interaction.guild.members.ban(id);
+				await interaction.guild.members.ban(id, { reason: reason });
 
 				// modlog
 				const idembed = new Discord.MessageEmbed()
