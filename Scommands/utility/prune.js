@@ -11,7 +11,7 @@ module.exports = {
 		.addIntegerOption(option => option.setName('amount').setDescription('Number of messages to prune').setRequired(true)),
 	async execute(interaction) {
 		try {
-			interaction.reply({ content: `Deleting...`, ephemeral: true });
+			await interaction.reply({ content: `Deleting...`, ephemeral: true });
 
 			const amount = await interaction.options.getInteger('amount');
 			const logs = await interaction.guild.channels.cache.get(logsc);
@@ -37,7 +37,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 	},
 };

@@ -526,17 +526,15 @@ module.exports = {
 					await embed.react('💛'),
 					await embed.react('💚'),
 					await embed.react('🧡'),
-					// <:cute:814107978704879666>
-					await embed.react('<:cute:814107978704879666>'),
+					await embed.react('🩰'),
 					await embed.react('💜'),
 				])
 					.catch(error => console.error('One of the emojis failed to react:', error));
 
 				const filter = (reaction, user) => {
-					return ['💙', '❤️', '💛', '💚', '🧡', '<:cute:814107978704879666>', '💜'].includes(reaction.emoji.name) && user.id === interaction.user.id;
+					return ['💙', '❤️', '💛', '💚', '🧡', '🩰', '💜'].includes(reaction.emoji.name) && user.id === interaction.user.id;
 				};
 
-				// DOESN'T DO ANYTHING WHEN REACTION IS CUSTOM EMOJI!
 				await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 					.then(collected => {
 						if (collected.has('💙')) {
@@ -554,7 +552,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -582,7 +580,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -610,7 +608,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -638,7 +636,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -666,7 +664,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -694,7 +692,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -722,7 +720,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -750,7 +748,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -778,7 +776,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -806,7 +804,7 @@ module.exports = {
 						if (collected.has('🧡')) {
 							embed.edit({ embeds: [orangeembed] });
 						}
-						if (collected.has('<:cute:814107978704879666>')) {
+						if (collected.has('🩰')) {
 							embed.edit({ embeds: [pinkembed] });
 						}
 						if (collected.has('💜')) {
@@ -823,7 +821,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 
 	},

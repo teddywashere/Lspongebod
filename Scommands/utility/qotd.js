@@ -11,7 +11,7 @@ module.exports = {
 		.addStringOption(option => option.setName('question').setDescription('The question to ask').setRequired(true)),
 	async execute(interaction) {
 		try {
-			interaction.reply({ content: `Sending...`, ephemeral: true });
+			await interaction.reply({ content: `Sending...`, ephemeral: true });
 
 			const question = await interaction.options.getString('question');
 			const general = await interaction.guild.channels.cache.get(generalc);
@@ -33,7 +33,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 
 	},
