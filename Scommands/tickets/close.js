@@ -1,7 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 
-const { closedtickets, logsc, owner } = require('./../../config.json');
+const { closedtickets, logsc, owner, opentickets } = require('./../../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -24,7 +24,8 @@ module.exports = {
 			const me = await interaction.guild.members.cache.get(owner);
 			if (!logs) await me.send(`${interaction.user} tried to use close tickets command in ${interaction.guild}\n**ERROR:**\nLogs not found`).catch(O_o => console.log(O_o));
 			if (!category) return interaction.reply({ content: `Closed tickets category not found`, ephemeral: true });
-			if (ticket.Parent === category) return interaction.reply({ content: 'Ticket is already closed', ephemeral: true });
+			if (ticket.parentId === closedtickets) return interaction.reply({ content: 'Ticket is already closed', ephemeral: true });
+			if (ticket.parentId != opentickets) return interaction.editReply({ content: `Please make sure the channel you want to close is an open ticket`, ephemeral: true });
 
 			// close
 			await ticket.setParent(category);
@@ -54,7 +55,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			interaction.reply({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.reply({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 
 	},
