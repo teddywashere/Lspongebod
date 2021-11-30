@@ -92,7 +92,7 @@ module.exports = {
 
 				if (interaction.user.id === id) return interaction.editReply({ content: "You can't ban yourself, dummy!", ephemeral: true });
 				if (id === clientId) return interaction.editReply({ content: "Sorry mate but I can't ban myself.", ephemeral: true });
-				if (!client.users.cache.get(id)) return interaction.editReply({ content: `${id} is not a userId.`, ephemeral: true });
+				if (!client.users.fetch(id)) await interaction.editReply({ content: `${id} is not a userId.`, ephemeral: true });
 				if (banmap.get(id)) return interaction.editReply({ content:`This user is already banned.`, ephemeral: true });
 
 				// ban
