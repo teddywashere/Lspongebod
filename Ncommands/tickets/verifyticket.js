@@ -8,12 +8,12 @@ module.exports = {
 	description: 'Opens age verification ticket',
 	async execute(message) {
 		try {
-			const member = message.guild.members.cache.get(message.author.id);
-			const logs = message.guild.channels.cache.get(logsc);
-			const category = message.guild.channels.cache.get(opentickets);
-			const staff = message.guild.roles.cache.get(staffr);
+			const member = await message.guild.members.cache.get(message.author.id);
+			const logs = await message.guild.channels.cache.get(logsc);
+			const category = await message.guild.channels.cache.get(opentickets);
+			const staff = await message.guild.roles.cache.get(staffr);
 
-			const me = message.guild.members.cache.get(owner);
+			const me = await message.guild.members.cache.get(owner);
 			if (!logs) await me.send(`${message.author} tried to use verify ticket command in ${message.guild}\n**ERROR:**\nLogs channel not found`).catch(O_o => console.log(O_o));
 
 			if (!message.guild.roles.cache.get(jailr)) return message.reply({ content: `Jail role not found` });
@@ -26,7 +26,7 @@ module.exports = {
 			const name = await message.author.username.toLowerCase();
 			const disc = await message.author.discriminator.toString();
 			const channel = await message.guild.channels.cache.find(c => c.name === `verify-${name}${disc}`);
-			if (channel && channel.ParentId === opentickets) return message.reply(`You already have an open verification ticket!\n${channel}`);
+			if (channel && channel.parentId === opentickets) return message.reply(`You already have an open verification ticket!\n${channel}`);
 
 			// make private ticket
 			await message.guild.channels.create(`verify - ${message.author.tag}`, {
@@ -66,7 +66,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			message.reply({ content: `**Something went wrong... Sorry**\n${error}!` });
+			await message.reply({ content: `**Something went wrong... Sorry**\n${error}!` });
 		}
 
 	},
