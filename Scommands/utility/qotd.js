@@ -34,7 +34,7 @@ module.exports = {
 			}
 
 			if (!question) {
-				const number = [Math.floor(Math.random() * 200 + 1)];
+				const number = [Math.floor(Math.random() * 201 + 1)];
 				const rquestion = randomquestion[`${number}`];
 				// make qotd embed
 				const qotdembed = new Discord.MessageEmbed()
