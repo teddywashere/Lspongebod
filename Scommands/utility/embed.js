@@ -68,15 +68,17 @@ module.exports = {
 
 	async execute(interaction) {
 		try {
-			const colors = new Map([
-				['lightblue', '#64b5f6'], ['brightblue', '#006ee6'], ['darkblue', '#003d80'],
-				['lightred', '#e64847'], ['brightred', '#de1e1d'], ['darkred', '#730f0f'],
-				['lightyellow', '#ffee78'], ['brightyellow', '#ffe326'], ['darkyellow', '#fdd128'],
-				['lightgreen', '#b9dc9a'], ['brightgreen', '#7ebf46'], ['darkgreen', '#527f2b'],
-				['lightorange', '#ff9657'], ['brightorange', '#ff6206'], ['darkorange', '#dc5200'],
-				['lightpink', '#ff9ad1'], ['brightpink', '#f62681'], ['darkpink', '#9a0048'],
-				['lightpurple', '#ca80e9'], ['brightpurple', '#9c27b0'], ['darkpurple', '#3e1046'],
-			]);
+			// const colors = new Map([
+			// 	['lightblue', '#64b5f6'], ['brightblue', '#006ee6'], ['darkblue', '#003d80'],
+			// 	['lightred', '#e64847'], ['brightred', '#de1e1d'], ['darkred', '#730f0f'],
+			// 	['lightyellow', '#ffee78'], ['brightyellow', '#ffe326'], ['darkyellow', '#fdd128'],
+			// 	['lightgreen', '#b9dc9a'], ['brightgreen', '#7ebf46'], ['darkgreen', '#527f2b'],
+			// 	['lightorange', '#ff9657'], ['brightorange', '#ff6206'], ['darkorange', '#dc5200'],
+			// 	['lightpink', '#ff9ad1'], ['brightpink', '#f62681'], ['darkpink', '#9a0048'],
+			// 	['lightpurple', '#ca80e9'], ['brightpurple', '#9c27b0'], ['darkpurple', '#3e1046'],
+			// ]);
+
+			const colors = require('./colors.json');
 
 			// EMBED BASIC
 			if (interaction.options.getSubcommand() === 'basic') {
@@ -121,7 +123,7 @@ module.exports = {
 				}
 				// COLOR FROM MAP
 				if (color != 'RANDOM' || color.startsWith() != '#') {
-					const mapcolor = colors.get(color.toLowerCase());
+					const mapcolor = colors[`${color.toLowerCase()}`];
 					const mbasicembed = new Discord.MessageEmbed()
 						.setTitle(`${title}`)
 						.setDescription(`${description}`)
@@ -183,7 +185,7 @@ module.exports = {
 				}
 				// COLOR FROM MAP
 				if (color != 'RANDOM' || color.startsWith() != '#') {
-					const mapcolor = colors.get(color.toLowerCase());
+					const mapcolor = colors[`${color.toLowerCase()}`];
 
 					const mfooterembed = new Discord.MessageEmbed()
 						.setTitle(`${title}`)
@@ -249,7 +251,7 @@ module.exports = {
 				}
 				// COLOR FROM MAP
 				if (color != 'RANDOM' || color.startsWith() != '#') {
-					const mapcolor = colors.get(color.toLowerCase());
+					const mapcolor = colors[`${color.toLowerCase()}`];
 
 					const mthumbnailembed = new Discord.MessageEmbed()
 						.setTitle(`${title}`)
@@ -317,7 +319,7 @@ module.exports = {
 				}
 				// COLOR FROM MAP
 				if (color != 'RANDOM' || color.startsWith() != '#') {
-					const mapcolor = colors.get(color.toLowerCase());
+					const mapcolor = colors[`${color.toLowerCase()}`];
 
 					const mallembed = new Discord.MessageEmbed()
 						.setTitle(`${title}`)
@@ -386,7 +388,7 @@ module.exports = {
 				}
 				// COLOR FROM MAP
 				if (color != 'RANDOM' || color.startsWith() != '#') {
-					const mapcolor = colors.get(color.toLowerCase());
+					const mapcolor = colors[`${color.toLowerCase()}`];
 
 
 					const mimageonembed = new Discord.MessageEmbed()
@@ -455,7 +457,7 @@ module.exports = {
 				}
 				// COLOR FROM MAP
 				if (color != 'RANDOM' || color.startsWith() != '#') {
-					const mapcolor = colors.get(color.toLowerCase());
+					const mapcolor = colors[`${color.toLowerCase()}`];
 
 					const mimagetwombed = new Discord.MessageEmbed()
 						.setTitle(`${title}`)
