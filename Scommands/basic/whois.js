@@ -24,6 +24,7 @@ module.exports = {
 		try {
 			// MEMBER
 			if (interaction.options.getSubcommand() === 'member') {
+				await interaction.reply({ content: `Searching...`, ephemeral: true});
 
 				const member = await interaction.options.getUser('target');
 				const mem = await client.users.fetch(member.id);
@@ -36,15 +37,18 @@ module.exports = {
 					.setColor('#00ffb6')
 					.setTimestamp();
 
-				return interaction.reply({ embeds: [memberembed] });
+				return interaction.editReply({ content:`Found member:`, embeds: [memberembed] });
 			}
 
 			// ID
 			if (interaction.options.getSubcommand() === 'id') {
+				await interaction.reply({ content: `Searching...`, ephemeral: true});
 
 				const id = await interaction.options.getString('id');
-				if (!client.users.fetch(id)) return interaction.reply({ content: `${id} is not a userId.`, ephemeral: true });
-				const user = await client.users.fetch(id);
+				const user = await client.users.fetch(id).catch ((error) => {
+					console.error(error);
+					return interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+				});
 				const banmap = await interaction.guild.bans.fetch();
 
 				const idembed = new Discord.MessageEmbed()
@@ -54,7 +58,7 @@ module.exports = {
 					.setColor('#00ffb6')
 					.setTimestamp();
 
-				await interaction.reply({ embeds: [idembed] });
+				await interaction.editReply({ content: `Found member:`, embeds: [idembed] });
 
 				if (banmap.get(id)) {
 					const banned = await banmap.get(id);
@@ -71,7 +75,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			await interaction.reply({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
 		}
 	},
 };
