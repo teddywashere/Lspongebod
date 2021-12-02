@@ -24,7 +24,11 @@ module.exports = {
 
 			const me = await interaction.guild.members.cache.get(owner);
 			if (!modlog) await me.send(`${interaction.user} tried to use unban command in ${interaction.guild}\n**ERROR:**\nModlog not found`);
-			if (!client.users.fetch(id)) return interaction.editReply({ content: `${id} is not a userId.`, ephemeral: true });
+			const user = await client.users.fetch(id).catch ((error) => {
+				console.error(error);
+				return interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			});
+			if (!user) return;
 			if (!banmap.get(id)) return interaction.editReply({ content:`This user is not banned.`, ephemeral: true });
 
 			// unban
