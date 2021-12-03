@@ -5,8 +5,8 @@ const fs = require('fs');
 
 const { adminr, staffr, friendr } = require('./config.json');
 // Place your client and guild ids here
-const clientId = '825349710368997446';
-const guildId = '788794708087275550';
+const clientId = '';
+const guildId = '';
 
 const commands = [];
 const commandFolders = fs.readdirSync('./Scommands');
