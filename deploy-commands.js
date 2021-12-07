@@ -42,21 +42,20 @@ const rest = new REST({ version: '9' }).setToken(token);
 		const pingCommand = response.find(cmd => cmd.name === 'ping');
 		const whoisCommand = response.find(cmd => cmd.name === 'whois');
 		const sayCommand = response.find(cmd => cmd.name === 'say');
+		const helpCommand = response.find(cmd => cmd.name === 'help');
 
 		// staff
 		const arrestCommand = response.find(cmd => cmd.name === 'arrest');
 		const banCommand = response.find(cmd => cmd.name === 'ban');
 		const kickCommand = response.find(cmd => cmd.name === 'kick');
+		const warnCommand = response.find(cmd => cmd.name === 'warn');
 		const muteCommand = response.find(cmd => cmd.name === 'mute');
-		const unbanCommand = response.find(cmd => cmd.name === 'unban');
-		const unmuteCommand = response.find(cmd => cmd.name === 'unmute');
-		const closeCommand = response.find(cmd => cmd.name === 'close');
-		const renameCommand = response.find(cmd => cmd.name === 'rename');
-		const addroleCommand = response.find(cmd => cmd.name === 'addrole');
+		const unCommand = response.find(cmd => cmd.name === 'un');
+		const ticketCommand = response.find(cmd => cmd.name === 'ticket');
+		const roleCommand = response.find(cmd => cmd.name === 'role');
 		const embedCommand = response.find(cmd => cmd.name === 'embed');
 		const deleteCommand = response.find(cmd => cmd.name === 'delete');
 		const qotdCommand = response.find(cmd => cmd.name === 'qotd');
-		const removeroleCommand = response.find(cmd => cmd.name === 'removerole');
 
 		const fullPermissions = [
 			// admin
@@ -137,6 +136,21 @@ const rest = new REST({ version: '9' }).setToken(token);
 				],
 			},
 			{
+				id: warnCommand.id,
+				permissions: [
+					{
+						id: staffr,
+						type: 1,
+						permission: true,
+					},
+					{
+						id: adminr,
+						type: 1,
+						permission: true,
+					},
+				],
+			},
+			{
 				id: muteCommand.id,
 				permissions: [
 					{
@@ -152,7 +166,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 				],
 			},
 			{
-				id: unbanCommand.id,
+				id: unCommand.id,
 				permissions: [
 					{
 						id: staffr,
@@ -167,7 +181,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 				],
 			},
 			{
-				id: unmuteCommand.id,
+				id: ticketCommand.id,
 				permissions: [
 					{
 						id: staffr,
@@ -182,37 +196,7 @@ const rest = new REST({ version: '9' }).setToken(token);
 				],
 			},
 			{
-				id: closeCommand.id,
-				permissions: [
-					{
-						id: staffr,
-						type: 1,
-						permission: true,
-					},
-					{
-						id: adminr,
-						type: 1,
-						permission: true,
-					},
-				],
-			},
-			{
-				id: renameCommand.id,
-				permissions: [
-					{
-						id: staffr,
-						type: 1,
-						permission: true,
-					},
-					{
-						id: adminr,
-						type: 1,
-						permission: true,
-					},
-				],
-			},
-			{
-				id: addroleCommand.id,
+				id: roleCommand.id,
 				permissions: [
 					{
 						id: staffr,
@@ -271,9 +255,15 @@ const rest = new REST({ version: '9' }).setToken(token);
 					},
 				],
 			},
+			// friend
 			{
-				id: removeroleCommand.id,
+				id: pingCommand.id,
 				permissions: [
+					{
+						id: friendr,
+						type: 1,
+						permission: true,
+					},
 					{
 						id: staffr,
 						type: 1,
@@ -286,9 +276,8 @@ const rest = new REST({ version: '9' }).setToken(token);
 					},
 				],
 			},
-			// friend
 			{
-				id: pingCommand.id,
+				id: helpCommand.id,
 				permissions: [
 					{
 						id: friendr,
