@@ -9,13 +9,13 @@ const clientId = '';
 const guildId = '';
 
 const commands = [];
-const commandFolders = fs.readdirSync('./Scommands');
+const commandFolders = fs.readdirSync('./Commands/Scommands');
 for (const folder of commandFolders) {
 	const commandFiles = fs
-		.readdirSync(`./Scommands/${folder}`)
+		.readdirSync(`./Commands/Scommands/${folder}`)
 		.filter((file) => file.endsWith('.js'));
 	for (const file of commandFiles) {
-		const command = require(`./Scommands/${folder}/${file}`);
+		const command = require(`./Commands/Scommands/${folder}/${file}`);
 		commands.push(command.data.toJSON());
 	}
 }
