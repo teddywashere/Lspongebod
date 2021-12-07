@@ -11,25 +11,25 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 // slash commands
 client.commands = new Collection();
 
-const commandFolders = fs.readdirSync('./Scommands');
+const commandFolders = fs.readdirSync('./Commands/Scommands');
 for (const folder of commandFolders) {
 	const commandFiles = fs
-		.readdirSync(`./Scommands/${folder}`)
+		.readdirSync(`./Commands/Scommands/${folder}`)
 		.filter((file) => file.endsWith('.js'));
 	for (const file of commandFiles) {
-		const command = require(`./Scommands/${folder}/${file}`);
+		const command = require(`./Commands/Scommands/${folder}/${file}`);
 		client.commands.set(command.data.name, command);
 	}
 }
 
 // normal commands
-const ncommandFolders = fs.readdirSync('./Ncommands');
+const ncommandFolders = fs.readdirSync('./Commands/Ncommands');
 for (const folder of ncommandFolders) {
 	const ncommandFiles = fs
-		.readdirSync(`./Ncommands/${folder}`)
+		.readdirSync(`./Commands/Ncommands/${folder}`)
 		.filter((file) => file.endsWith('.js'));
 	for (const file of ncommandFiles) {
-		const ncommand = require(`./Ncommands/${folder}/${file}`);
+		const ncommand = require(`./Commands/Ncommands/${folder}/${file}`);
 		client.commands.set(ncommand.name, ncommand);
 	}
 }
@@ -37,10 +37,10 @@ for (const folder of ncommandFolders) {
 // ----------------------------------------------------------------------------------------------------------------------------------
 // event listener
 
-const eventFiles = fs.readdirSync('./events').filter(file => file.endsWith('.js'));
+const eventFiles = fs.readdirSync('./Events').filter(file => file.endsWith('.js'));
 
 for (const file of eventFiles) {
-	const event = require(`./events/${file}`);
+	const event = require(`./Events/${file}`);
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args));
 	}
