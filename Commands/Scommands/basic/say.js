@@ -30,7 +30,7 @@ module.exports = {
 			return interaction.editReply({ content: `Done.`, ephemeral: true });
 		}
 		catch (O_o) {
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},
