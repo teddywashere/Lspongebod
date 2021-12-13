@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-function */
 /* eslint-disable no-unused-vars */
 const { SlashCommandBuilder } = require('@discordjs/builders');
 
@@ -24,7 +25,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},

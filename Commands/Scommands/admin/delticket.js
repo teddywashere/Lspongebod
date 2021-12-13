@@ -1,3 +1,5 @@
+/* eslint-disable no-empty-function */
+/* eslint-disable no-unused-vars */
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 const { logsc, errorc, opentickets, closedtickets } = require('../../../config.json');
@@ -32,11 +34,11 @@ module.exports = {
 
 			await ticket.delete();
 
-			return interaction.editReply({ content: `Ticket deleted`, ephemeral: true });
+			return interaction.editReply({ content: `Ticket deleted`, ephemeral: true }).catch(oopsie => {});
 		}
 		catch (O_o) {
 			console.error(O_o);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true });
+			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},
