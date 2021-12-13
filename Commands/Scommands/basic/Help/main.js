@@ -11,19 +11,21 @@ module.exports = {
 				.setDescription(`_ _\n**__Basic Commands:__**\n> ping _ _  _ _ *\`gives the approximate ping\`*\n> say _ _   _ _  *\`repeats your message\`*\n> whois _ _ *\`gives info on a member or user\`*\n_ _`)
 				.setColor('#e62d2d')
 				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/917774638447198218/Screenshot_20211207-144830_1.png')
-				.setFooter('say [lsb slash] for help on how to use slash commands');
+				.setFooter('say [lsb slash] for help on how to use slash commands\n\nlsb help [command] for more info about a command');
 
 			const staff = new Discord.MessageEmbed()
 				.setTitle(`:flags: Staff Help Menu`)
 				.setDescription(`_ _\n**__Moderation Commands:__**\n> arrest _ _ *\`throw em in jail\`*\n> ban _ _   _ _ *\`ban a member or id\`*\n> kick _ _   _ _ *\`kick a member\`*\n> mute _ _ _ _ *\`mute a member\`*\n> un _ _   _ _  _ _ *\`undo a mute or ban\`*\n> warn _ _ _ _ *\`add, edit, remove or show warn(s)\`*\n\n**__Utility__**\n> prune _ _  *\`delete messages\`*\n> role _ _   _ _  *\`add or remove a role\`*\n> ticket _ _ _ _ *\`rename/close ticket, add/remove member\`*\n> qotd _ _   _ _ *\`make a new qotd\`*\n> embed _ _ *\`make various different embeds\`*\n_ _`)
 				.setColor('#2c9ee2')
-				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/917774551616720936/Screenshot_20211207-144755_1.png');
+				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/917774551616720936/Screenshot_20211207-144755_1.png')
+				.setFooter('lsb help [command] for more info about a command');
 
 			const admin = new Discord.MessageEmbed()
 				.setTitle(`:wind_chime: Admin Help Menu`)
 				.setDescription(`_ _\n**__Main:__**\n> backup   _ _  *\`update the server template\`*\n> delticket _ _ *\`delete a ticket\`*\n> dm _ _  _ _  _ _  _ _ _ _ *\`dm a member (send only)\`*`)
 				.setColor('#2da263')
-				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/917774551910346772/SpongeBob_BfBB_00.jpg');
+				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/917774551910346772/SpongeBob_BfBB_00.jpg')
+				.setFooter('lsb help [command] for more info about a command');
 
 			const fbuttons = new Discord.MessageActionRow()
 				.addComponents(
