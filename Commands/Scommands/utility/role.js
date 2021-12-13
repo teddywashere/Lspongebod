@@ -43,7 +43,7 @@ module.exports = {
 		}
 		catch (O_o) {
 			console.error(O_o);
-			return interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true });
+			return interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},
