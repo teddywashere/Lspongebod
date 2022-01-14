@@ -8,6 +8,9 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 require('./DatabaseModels/Warns')(sequelize, Sequelize.DataTypes);
+require('./DatabaseModels/Setup')(sequelize, Sequelize.DataTypes);
+require('./DatabaseModels/Tickets')(sequelize, Sequelize.DataTypes);
+require('./DatabaseModels/jailmute')(sequelize, Sequelize.DataTypes);
 
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 
