@@ -12,7 +12,7 @@ module.exports = {
 		}
 		catch (O_o) {
 			console.error(O_o);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
+			await interaction.followUp({ content: `\`Please screenshot and report me to Rainbow\`\n**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},

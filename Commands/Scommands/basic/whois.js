@@ -1,9 +1,20 @@
+/* eslint-disable no-unused-vars */
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 
 const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING] });
-const { token } = require('../../../config.json');
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('database', 'username', 'password', {
+	host: 'localhost',
+	dialect: 'sqlite',
+	logging: false,
+	storage: 'database.sqlite',
+});
+
+const Setup = require('../../../DatabaseModels/Setup')(sequelize, Sequelize);
+const Warns = require('../../../DatabaseModels/Warns')(sequelize, Sequelize);
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -13,7 +24,7 @@ module.exports = {
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('member').setDescription('Gives info on a server member')
-				.addUserOption(option => option.setName('target').setDescription('The member you want info on').setRequired(true)),
+				.addUserOption(option => option.setName('member').setDescription('The member you want info on').setRequired(true)),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
@@ -22,18 +33,23 @@ module.exports = {
 		),
 	async execute(interaction) {
 		try {
+			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
+			if (!server) return interaction.reply({ content: `Please do /setup error first` });
 			// MEMBER
 			if (interaction.options.getSubcommand() === 'member') {
 				await interaction.reply({ content: `Searching...`, ephemeral: true });
 
-				const member = await interaction.options.getUser('target');
+				const member = await interaction.options.getUser('member');
 				const mem = await client.users.fetch(member.id);
 				const guildmem = await interaction.guild.members.cache.get(member.id);
+
+				const warns = await Warns.findAll({ where: { user_id: member.id, guild_id: interaction.guild.id } });
+				const warnmap = await warns.map(w => w.user_id);
 
 				const memberembed = new Discord.MessageEmbed()
 					.setTitle(`Member info:`)
 					.setThumbnail(member.displayAvatarURL())
-					.setDescription(`_ _\n**Member:** ${member}\n\n**Tag:** ${member.tag}\n\n**ID:** \`${member.id}\`\n\n**Account created:** ${mem.createdAt}\n${mem.createdTimestamp} \n\n**Joined server:** ${guildmem.joinedAt}\n${guildmem.joinedTimestamp}\n_ _`)
+					.setDescription(`_ _\n**Member:** ${member}\n\n**Tag:** ${member.tag}\n\n**ID:** \`${member.id}\`\n\n**Account created:** ${mem.createdAt}\n${mem.createdTimestamp} \n\n**Joined server:** ${guildmem.joinedAt}\n${guildmem.joinedTimestamp}\n\n**Warns:** \`${warnmap.lenght}\`_ _`)
 					.setColor('#00ffb6')
 					.setTimestamp();
 
@@ -49,11 +65,13 @@ module.exports = {
 					return interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true });
 				});
 				const banmap = await interaction.guild.bans.fetch();
+				const warns = await Warns.findAll({ where: { user_id: member.id, guild_id: interaction.guild.id } });
+				const warnmap = await warns.map(w => w.user_id);
 
 				const idembed = new Discord.MessageEmbed()
 					.setTitle(`User info:`)
 					.setThumbnail(user.displayAvatarURL())
-					.setDescription(`_ _\n**User:** ${user}\n\n**Tag:** ${user.tag}\n\n**ID:** \`${user.id}\`\n\n**Account created:** ${user.createdAt}\n ${user.createdTimestamp}\n_ _`)
+					.setDescription(`_ _\n**User:** ${user}\n\n**Tag:** ${user.tag}\n\n**ID:** \`${user.id}\`\n\n**Account created:** ${user.createdAt}\n ${user.createdTimestamp}\n\n**Warns:** \`${warnmap.lenght}\`_ _`)
 					.setColor('#00ffb6')
 					.setTimestamp();
 
@@ -64,18 +82,18 @@ module.exports = {
 					const bannedembed = new Discord.MessageEmbed()
 						.setTitle(`User info:`)
 						.setThumbnail(user.displayAvatarURL())
-						.setDescription(`_ _\n**User:** ${user}\n\n**Tag:** ${user.tag}\n\n**ID:** \`${user.id}\`\n\n**Account created:** ${user.createdAt}\n ${user.createdTimestamp}\n\n**This user is banned from this guild. Reason:**\n\`${banned.reason}\`\n_ _`)
+						.setDescription(`_ _\n**User:** ${user}\n\n**Tag:** ${user.tag}\n\n**ID:** \`${user.id}\`\n\n**Account created:** ${user.createdAt}\n ${user.createdTimestamp}\n\n**Warns:** \`${warnmap.lenght}\`\n\n**This user is banned from this guild. Reason:**\n\`${banned.reason}\`\n_ _`)
 						.setColor('#00ffb6')
 						.setTimestamp();
 
 					await interaction.editReply({ embeds: [bannedembed] });
 				}
 			}
+			client.login(server.token);
 		}
 		catch (O_o) {
 			console.error(O_o);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
+			await interaction.followUp({ content: `\`Please screenshot and report me to Rainbow\`\n**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 	},
 };
-client.login(token);
