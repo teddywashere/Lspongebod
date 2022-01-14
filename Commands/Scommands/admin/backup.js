@@ -2,7 +2,16 @@
 /* eslint-disable no-unused-vars */
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
-const { logsc, template, errorc } = require('../../../config.json');
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('database', 'username', 'password', {
+	host: 'localhost',
+	dialect: 'sqlite',
+	logging: false,
+	storage: 'database.sqlite',
+});
+
+const Setup = require('../../../DatabaseModels/Setup')(sequelize, Sequelize);
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -12,16 +21,16 @@ module.exports = {
 
 	async execute(interaction) {
 		try {
-			await interaction.reply({ content: 'Backing up...', ephemeral: true });
-			const logs = await interaction.guild.channels.cache.get(logsc);
 			const member = await interaction.guild.members.cache.get(interaction.user.id);
+			if (!member.permissions.has('ADMINISTRATOR')) return;
+			await interaction.reply({ content: 'Backing up...', ephemeral: true });
+			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
+			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
+			const logs = await interaction.guild.channels.cache.get(server.logs_channel);
 
 			const templates = await interaction.guild.fetchTemplates();
-			const backup = await templates.get(template);
-
-			const error = await interaction.guild.channels.cache.get(errorc);
-			if (!error) return interaction.channel.send('Please do setup first!');
-			if (!logs || !member) await error.send(`Couldn't find eihter the log channel or "member"`);
+			const backup = await templates.get(server.template);
+			if (!backup) return interaction.editReply({ content: `You need to run /setup other and set up a server template first` });
 
 			if (backup) {
 				await backup.sync();
@@ -29,19 +38,19 @@ module.exports = {
 
 				const logsembed = new Discord.MessageEmbed()
 					.setTitle(`:dvd:**Server Backup**:dvd:`)
-					.setDescription(`_ _\n${member} backed up the server\n\nBackup template: "https://discord.new/${template}"\n_ _`)
+					.setDescription(`_ _\n${member} backed up the server\n\nBackup template: "https://discord.new/${server.template}"\n_ _`)
 					.setColor('#b68f00')
 					.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/912633025928515644/Screenshot_20211123-101728_1.png')
 					.setTimestamp();
 
 
-				await logs.send({ embeds: [logsembed] }).catch(O_o => error.send(`Please setup the server properly (logs channel not found)`));
+				if (logs) logs.send({ embeds: [logsembed] }).catch(O_o => {});
 				return interaction.editReply({ content: 'Template successfully backed up', ephemeral: true });
 			}
 		}
 		catch (O_o) {
 			console.error(O_o);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
+			await interaction.followUp({ content: `\`Please screenshot and report me to Rainbow\`\n**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},

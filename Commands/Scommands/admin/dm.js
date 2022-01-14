@@ -11,12 +11,13 @@ module.exports = {
 		.addStringOption(option => option.setName('content').setDescription('The dm to send').setRequired(true)),
 	async execute(interaction) {
 		try {
+			const member = await interaction.guild.members.cache.get(interaction.user.id);
+			if (!member.permissions.has('ADMINISTRATOR')) return;
 			await interaction.reply({ content: 'typing...', ephemeral: true });
 
 			const dm = await interaction.options.getString('content');
 			const target = await interaction.options.getUser('target');
 
-			// dm and catch
 			await target.send(`${dm}`).catch(O_o => {
 				return interaction.followUp({ content: `Couldn't send the message. ${target} probably has their dms closed...`, ephemeral: true });
 			});
@@ -25,7 +26,7 @@ module.exports = {
 		}
 		catch (error) {
 			console.error(error);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${error}!`, ephemeral: true }).catch(oopsie => {});
+			await interaction.followUp({ content: `\`Please screenshot and report me to Rainbow\`\n**Something went wrong... Sorry**\n${error}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},
