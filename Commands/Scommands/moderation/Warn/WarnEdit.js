@@ -1,8 +1,7 @@
+/* eslint-disable no-unused-vars */
 const Discord = require('discord.js');
 const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING] });
-
-const { modlogc, errorc, token } = require('../../../../config.json');
 
 const Sequelize = require('sequelize');
 
@@ -14,25 +13,28 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 const Warns = require('../../../../DatabaseModels/Warns')(sequelize, Sequelize);
+const Setup = require('../../../../DatabaseModels/Setup')(sequelize, Sequelize);
 
 module.exports = {
 	async execute(interaction) {
 		try {
+			const author = await interaction.guild.members.cache.get(interaction.user.id);
+			if (!author.permissions.has('KICK_MEMBERS')) return interaction.editReply({ content: `You don't have the kick members permission.`, ephemeral: true });
+
+			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
+			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
+
 			const reason = interaction.options.getString('reason');
 			const number = interaction.options.getNumber('warn');
 			const edit = interaction.options.getString('edit');
 			const target = interaction.options.getUser('member');
 			const id = interaction.options.getString('id');
-			const modlog = interaction.guild.channels.cache.get(modlogc);
-			const error = interaction.guild.channels.cache.get(errorc);
-
-			if (!error) return interaction.followUp('Please do the setup!');
-			if (!modlog) await error.send(`modlog not found.`);
+			const modlog = interaction.guild.channels.cache.get(server.modlog_channel);
 			if (!target && !id) return interaction.editReply({ content: `You have to choose either a member or a user id!`, ephemeral: true });
 
 			// MEMBER
 			if (target) {
-				const userwarns = await Warns.findAll({ where: { user_id: target.id } });
+				const userwarns = await Warns.findAll({ where: { user_id: target.id, guild_id: interaction.guild.id } });
 				const first = userwarns.find(warn => warn.warn === 1);
 				const second = userwarns.find(warn => warn.warn === 2);
 
@@ -47,11 +49,11 @@ module.exports = {
 
 					const modlogembed = new Discord.MessageEmbed()
 						.setTitle(`:pencil:Warn edited:pencil:`)
-						.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+						.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 						.setColor('#a260ff')
 						.setThumbnail(target.displayAvatarURL())
 						.setTimestamp();
-					modlog.send({ embeds: [modlogembed] });
+					if (modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
 					return interaction.editReply({ content: `${target}s ${number} warn edited successfully!`, ephemeral: true });
 				}
@@ -65,11 +67,11 @@ module.exports = {
 
 						const modlogembed = new Discord.MessageEmbed()
 							.setTitle(`:pencil:Warn edited:pencil:`)
-							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#a260ff')
 							.setThumbnail(target.displayAvatarURL())
 							.setTimestamp();
-						modlog.send({ embeds: [modlogembed] });
+						if(modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
 						return interaction.editReply({ content: `${target}s ${number} warn edited successfully!`, ephemeral: true });
 					}
@@ -80,11 +82,11 @@ module.exports = {
 
 						const modlogembed = new Discord.MessageEmbed()
 							.setTitle(`:pencil:Warn edited:pencil:`)
-							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#a260ff')
 							.setThumbnail(target.displayAvatarURL())
 							.setTimestamp();
-						modlog.send({ embeds: [modlogembed] });
+						if(modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
 						return interaction.editReply({ content: `${target}s ${number} warn edited successfully!`, ephemeral: true });
 					}
@@ -93,7 +95,7 @@ module.exports = {
 			if (id) {
 				const user = await client.users.fetch(id);
 				if (!user) return interaction.editReply({ content: `Couldn't find that user`, ephemeral: true });
-				const userwarns = await Warns.findAll({ where: { user_id: id } });
+				const userwarns = await Warns.findAll({ where: { user_id: id, guild_id: interaction.guild.id } });
 				const first = userwarns.find(warn => warn.warn === 1);
 				const second = userwarns.find(warn => warn.warn === 2);
 				const third = userwarns.find(warn => warn.warn === 3);
@@ -110,11 +112,11 @@ module.exports = {
 
 					const modlogembed = new Discord.MessageEmbed()
 						.setTitle(`:pencil:Warn edited:pencil:`)
-						.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+						.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 						.setColor('#a260ff')
 						.setThumbnail(user.displayAvatarURL())
 						.setTimestamp();
-					modlog.send({ embeds: [modlogembed] });
+					if(modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
 					return interaction.editReply({ content: `${user}s ${number} warn edited successfully!`, ephemeral: true });
 				}
@@ -128,11 +130,11 @@ module.exports = {
 
 						const modlogembed = new Discord.MessageEmbed()
 							.setTitle(`:pencil:Warn edited:pencil:`)
-							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#a260ff')
 							.setThumbnail(user.displayAvatarURL())
 							.setTimestamp();
-						modlog.send({ embeds: [modlogembed] });
+						if(modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
 						return interaction.editReply({ content: `${user}s ${number} warn edited successfully!`, ephemeral: true });
 					}
@@ -143,11 +145,11 @@ module.exports = {
 
 						const modlogembed = new Discord.MessageEmbed()
 							.setTitle(`:pencil:Warn edited:pencil:`)
-							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#a260ff')
 							.setThumbnail(user.displayAvatarURL())
 							.setTimestamp();
-						modlog.send({ embeds: [modlogembed] });
+						if(modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
 						return interaction.editReply({ content: `${user}s ${number} warn edited successfully!`, ephemeral: true });
 					}
@@ -160,11 +162,11 @@ module.exports = {
 
 						const modlogembed = new Discord.MessageEmbed()
 							.setTitle(`:pencil:Warn edited:pencil:`)
-							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#a260ff')
 							.setThumbnail(user.displayAvatarURL())
 							.setTimestamp();
-						modlog.send({ embeds: [modlogembed] });
+						if(modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
 						return interaction.editReply({ content: `${user}s ${number} warn edited successfully!`, ephemeral: true });
 					}
@@ -175,11 +177,11 @@ module.exports = {
 
 						const modlogembed = new Discord.MessageEmbed()
 							.setTitle(`:pencil:Warn edited:pencil:`)
-							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#a260ff')
 							.setThumbnail(user.displayAvatarURL())
 							.setTimestamp();
-						modlog.send({ embeds: [modlogembed] });
+						if(modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
 						return interaction.editReply({ content: `${user}s ${number} warn edited successfully!`, ephemeral: true });
 					}
@@ -190,12 +192,13 @@ module.exports = {
 
 						const modlogembed = new Discord.MessageEmbed()
 							.setTitle(`:pencil:Warn edited:pencil:`)
-							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n**Reason:** ${reason}`)
+							.setDescription(`_ _\n**Member:** ${user}\n**Tag:** ${user.username}\n**ID:** \`${user.id}\`\n\n**Warn:** ${number}\n**Old reason:** ${oldreason}\n**__New Reason:__** ${edit}\n\n**Edited by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#a260ff')
 							.setThumbnail(user.displayAvatarURL())
 							.setTimestamp();
-						modlog.send({ embeds: [modlogembed] });
+						if(modlog) modlog.send({ embeds: [modlogembed] }).catch(O_o => {});
 
+						client.login(server.token);
 						return interaction.editReply({ content: `${user}s ${number} warn edited successfully!`, ephemeral: true });
 					}
 				}
@@ -207,4 +210,3 @@ module.exports = {
 		}
 	},
 };
-client.login(token);

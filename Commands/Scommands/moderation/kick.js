@@ -3,7 +3,16 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Discord = require('discord.js');
 
-const { modlogc, criminalsc, errorc, clientId } = require('../../../config.json');
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('database', 'username', 'password', {
+	host: 'localhost',
+	dialect: 'sqlite',
+	logging: false,
+	storage: 'database.sqlite',
+});
+
+const Setup = require('../../../DatabaseModels/Setup')(sequelize, Sequelize);
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -15,23 +24,20 @@ module.exports = {
 	async execute(interaction) {
 		try {
 			await interaction.reply({ content: `Kicking...`, ephemeral: true });
-
+			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
+			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
 			const target = await interaction.options.getUser('target');
 			const reason = await interaction.options.getString('reason');
 
-			const modlog = await interaction.guild.channels.cache.get(modlogc);
-			const criminals = await interaction.guild.channels.cache.get(criminalsc);
+			const modlog = await interaction.guild.channels.cache.get(server.modlog_channel);
+			const criminals = await interaction.guild.channels.cache.get(server.criminals_channel);
 
 			const author = await interaction.guild.members.cache.get(interaction.user.id);
 			const member = await interaction.guild.members.cache.get(target.id);
 
-			const error = await interaction.guild.channels.cache.get(errorc);
-			if (!error) return interaction.channel.send('Please do the setup first!');
-			if (!modlog || !criminals) await error.send(`Either modlog or criminals not found, please do the setup first!`);
-
 			if (author.roles.highest.position < member.roles.highest.position) return interaction.editReply({ content: `I'm not gonna let you do that.`, ephemeral: true });
 			if (interaction.user.id === target.id) return interaction.editReply({ content: "You can't kick yourself, dummy!", ephemeral: true });
-			if (target.id === clientId) return interaction.editReply({ content: "Sorry mate but I can't kick myself.", ephemeral: true });
+			if (target.id === server.client_id) return interaction.editReply({ content: "Sorry mate but I can't kick myself.", ephemeral: true });
 
 			// kick offender
 			const dmembed = new Discord.MessageEmbed()
@@ -53,7 +59,7 @@ module.exports = {
 				.setDescription(`_ _\n**Member:** ${target}\n\n**ID:** \`${target.id}\` \n \n**Kicked by:** ${interaction.user} \n \n**Reason:** ${reason}\n_ _`)
 				.setTimestamp();
 
-			await modlog.send({ embeds: [kickembed] }).catch(O_o => error.send(`${O_o}`));
+			if(modlog) modlog.send({ embeds: [kickembed] }).catch(O_o => {});
 
 			// send Criminals
 			const ripembed = new Discord.MessageEmbed()
@@ -63,14 +69,14 @@ module.exports = {
 				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/911659304443072612/c2823fe7a42bd0d578302c185bc241d0b32a4877a36008c36f2dbe47606ae717.jpg')
 				.setTimestamp();
 
-			await criminals.send({ embeds: [ripembed] }).catch(O_o => error.send(`${O_o}`));
+			if(criminals) criminals.send({ embeds: [ripembed] }).catch(O_o => {});
 
 			// reply
 			return interaction.editReply({ content: `${target.username} has been kicked.`, ephemeral: true });
 		}
 		catch (O_o) {
 			console.error(O_o);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
+			await interaction.followUp({ content: `\`Please screenshot and report me to Rainbow\`\n**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},

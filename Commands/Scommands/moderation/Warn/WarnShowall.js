@@ -5,8 +5,6 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING] });
 
-const { token } = require('../../../../config.json');
-
 const Sequelize = require('sequelize');
 
 const sequelize = new Sequelize('database', 'username', 'password', {
@@ -17,18 +15,24 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 const Warns = require('../../../../DatabaseModels/Warns')(sequelize, Sequelize);
+const Setup = require('../../../../DatabaseModels/Setup')(sequelize, Sequelize);
 
 module.exports = {
 	async execute(interaction) {
 		try {
-			// const
+			const author = await interaction.guild.members.cache.get(interaction.user.id);
+			if (!author.permissions.has('KICK_MEMBERS')) return interaction.editReply({ content: `You don't have the kick members permission.`, ephemeral: true });
+
+			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
+			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
+
 			const target = interaction.options.getUser('member');
 			const id = interaction.options.getString('id');
 
 			if (!target && !id) return interaction.editReply({ content: 'You need to choose either a member or a user id!', ephemeral: true });
 
 			if (target) {
-				const userwarns = await Warns.findAll({ where: { user_id: target.id } });
+				const userwarns = await Warns.findAll({ where: { user_id: target.id, guild_id: interaction.guild.id } });
 				const first = userwarns.find(warn => warn.warn === 1);
 				const second = userwarns.find(warn => warn.warn === 2);
 
@@ -533,10 +537,10 @@ module.exports = {
 				}
 
 			}
+			client.login(server.token);
 		}
 		catch (O_o) {
 			console.error(O_o);
 		}
 	},
 };
-client.login(token);

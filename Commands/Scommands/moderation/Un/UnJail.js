@@ -11,7 +11,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 const Setup = require('../../../../DatabaseModels/Setup')(sequelize, Sequelize);
-const Mute = require('../../../../DatabaseModels/jailmute')(sequelize, Sequelize);
+const Jail = require('../../../../DatabaseModels/jailmute')(sequelize, Sequelize);
 
 module.exports = {
 	async execute(interaction) {
@@ -27,24 +27,24 @@ module.exports = {
 			const member = await interaction.guild.members.cache.get(target.id);
 
 			const modlog = await interaction.guild.channels.cache.get(server.modlog_channel);
-			const muterole = await interaction.guild.roles.cache.get(server.mute_role);
+			const jailrole = await interaction.guild.roles.cache.get(server.jail_role);
 
-			if (!muterole) return interaction.editReply({ content: 'Mute role not found. Make sure its set up properly', ephemeral: true });
-			if (!member.roles.cache.has(server.mute_role)) return interaction.editReply({ content: `${target} is not muted.`, ephemeral: true });
-			if (target.id === interaction.user.id) return interaction.editReply({ content: `You can't unmute yourself, dummy!`, ephemeral: true });
+			if (!jailrole) return interaction.editReply({ content: 'Jail role not found. Make sure its set up properly', ephemeral: true });
+			if (!member.roles.cache.has(server.jail_role)) return interaction.editReply({ content: `${target} is not jailed.`, ephemeral: true });
+			if (target.id === interaction.user.id) return interaction.editReply({ content: `You can't get yourself out of jail, dummy!`, ephemeral: true });
 
 			const dmembed = new Discord.MessageEmbed()
-				.setTitle(`You've been unmuted in ${interaction.guild}`)
+				.setTitle(`You've been verified in ${interaction.guild}`)
 				.setDescription(`_ _\n**Reason:** ${reason}\n_ _`)
 				.setColor('#009fff')
 				.setThumbnail(interaction.guild.iconURL())
 				.setTimestamp();
 
-			await member.roles.remove(muterole);
+			await member.roles.remove(jailrole);
 			await target.send({ embeds: [dmembed] }).catch((O_o) => {});
 
 			const unmuteembed = new Discord.MessageEmbed()
-				.setTitle(`:grinning:**Member Unmuted**:grinning:`)
+				.setTitle(`:grinning:**Member Verified**:grinning:`)
 				.setDescription(`_ _\n**Member:** ${target}\n\n**Tag:** ${target.tag}\n\n**ID:** \`${target.id}\`\n\n**Unmuted by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n**Reason:** ${reason}\n_ _`)
 				.setColor('#009fff')
 				.setThumbnail(target.displayAvatarURL())
@@ -52,9 +52,10 @@ module.exports = {
 
 			if(modlog) modlog.send({ embeds: [unmuteembed] }).catch(O_o => {});
 
-			const jailmute = await Mute.findOne({ where: { user_id: target.id, guild_id: interaction.guild.id }});
-			if (jailmute) await jailmute.update({mute_status: 'false'});
-			return interaction.editReply({ content: `${target} has been unmuted`, ephemeral: true });
+			const jailmute = await Jail.findOne({ where: { user_id: target.id, guild_id: interaction.guild.id }});
+			if (jailmute) await jailmute.update({ jail_status: 'false' });
+			if (!jailmute) console.log('someone tried to unmute, jailmute not found');
+			return interaction.editReply({ content: `${target} has been verified`, ephemeral: true });
 		}
 		catch (O_o) {
 			console.error(O_o);

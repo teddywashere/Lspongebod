@@ -14,6 +14,13 @@ module.exports = {
 		)
 		.addSubcommand(subcommand =>
 			subcommand
+				.setName('jail')
+				.setDescription('(STAFF) Get a member out of jail')
+				.addUserOption(option => option.setName('member').setDescription('Member to release').setRequired(true))
+				.addStringOption(option => option.setName('reason').setDescription('Reason for release').setRequired(true)),
+		)
+		.addSubcommand(subcommand =>
+			subcommand
 				.setName('ban')
 				.setDescription('(STAFF) Unban a user')
 				.addStringOption(option => option.setName('id').setDescription('UserID of the user to unban').setRequired(true))
@@ -30,6 +37,15 @@ module.exports = {
 				if (unmuting) return unmuting.execute(interaction);
 			}
 
+			// UNJAIL A USER
+			if (interaction.options.getSubcommand() === 'jail') {
+				await interaction.reply({ content: `Filing paperwork...`, ephemeral: true });
+
+				const releasing = require('./Un/UnJail');
+
+				if (releasing) return releasing.execute(interaction);
+			}
+
 			// UNBAN A USER
 			if (interaction.options.getSubcommand() === 'ban') {
 				await interaction.reply({ content: `Unbanning...`, ephemeral: true });
@@ -42,7 +58,7 @@ module.exports = {
 		}
 		catch (O_o) {
 			console.error(O_o);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
+			await interaction.followUp({ content: `\`Please screenshot and report me to Rainbow\`\n**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},

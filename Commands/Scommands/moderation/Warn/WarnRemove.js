@@ -1,10 +1,9 @@
+/* eslint-disable no-unused-vars */
 const Discord = require('discord.js');
 const { Client, Intents } = require('discord.js');
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING] });
 
 const { MessageSelectMenu } = require('discord.js');
-
-const { modlogc, errorc, token } = require('../../../../config.json');
 
 const Sequelize = require('sequelize');
 
@@ -16,25 +15,24 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 const Warns = require('../../../../DatabaseModels/Warns')(sequelize, Sequelize);
-
-// ONLY THING LEFT IS EMBEDS AND A PROPER CATCH. (CANCEL DOESN'T WORK FOR SOME REASON...)
+const Setup = require('../../../../DatabaseModels/Setup')(sequelize, Sequelize);
 
 module.exports = {
 	async execute(interaction) {
 		try {
+			const author = await interaction.guild.members.cache.get(interaction.user.id);
+			if (!author.permissions.has('KICK_MEMBERS')) return interaction.editReply({ content: `You don't have the kick members permission.`, ephemeral: true });
+
+			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
+			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
+
 			const target = await interaction.options.getUser('member');
 			const reason = await interaction.options.getString('reason');
 			const name = target.id;
-			const modlog = interaction.guild.channels.cache.get(modlogc);
-			const error = interaction.guild.channels.cache.get(errorc);
+			const modlog = interaction.guild.channels.cache.get(server.modlog_channel);
 
-			if (!error) return interaction.channel.send('please do the setup!');
-			if (!modlog) return error.send('Modlog not found.');
+			const userwarns = await Warns.findAll({ where: { user_id: target.id, guild_id: interaction.guild.id } });
 
-			// get all warns of a user
-			const userwarns = await Warns.findAll({ where: { user_id: target.id } });
-
-			// get list of warn number | warn reason
 			const first = userwarns.find(warn => warn.warn === 1);
 			const second = userwarns.find(warn => warn.warn === 2);
 
@@ -72,20 +70,20 @@ module.exports = {
 
 						const warnremovembed = new Discord.MessageEmbed()
 							.setTitle(`:eyes:**Warn removed**:eyes:`)
-							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** 1\n**Warn Reason:** ${first.reason}\n\n**Removed by:** ${interaction.user}\n\n**Reason:** ${reason}\n_ _`)
+							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** 1\n**Warn Reason:** ${first.reason}\n\n**Removed by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#31bf4b')
 							.setThumbnail(target.displayAvatarURL())
 							.setTimestamp();
 
 						const dmembed = new Discord.MessageEmbed()
 							.setTitle(`Warn removed in ${interaction.guild}`)
-							.setDescription(`Your 1 warn has been removed by ${interaction.user}`)
+							.setDescription(`Your first warn has been removed by ${interaction.user}`)
 							.setColor('#31bf4b')
 							.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/917695438885371904/590103042.jpg')
 							.setTimestamp();
 
-						target.send({ embeds: [dmembed] }).catch(O_o => console.log(O_o));
-						modlog.send({ embeds: [warnremovembed] }).catch(O_o => error.send(`${O_o}`));
+						target.send({ embeds: [dmembed] }).catch(O_o => {});
+						if(modlog) modlog.send({ embeds: [warnremovembed] }).catch(O_o => {});
 
 						return interaction.editReply({ content: `Removed ${target}s first warn\n\nThey now have 0 warns.`, ephemeral: true, components: [] });
 					}
@@ -131,20 +129,20 @@ module.exports = {
 
 						const warnremovembed = new Discord.MessageEmbed()
 							.setTitle(`:eyes:**Warn removed**:eyes:`)
-							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** 2\n**Warn Reason:** ${first.reason}\n\n**Removed by:** ${interaction.user}\n\n**Reason:** ${reason}\n_ _`)
+							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** 1\n**Warn Reason:** ${first.reason}\n\n**Removed by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#31bf4b')
 							.setThumbnail(target.displayAvatarURL())
 							.setTimestamp();
 
 						const dmembed = new Discord.MessageEmbed()
 							.setTitle(`Warn removed in ${interaction.guild}`)
-							.setDescription(`Your 2 warn has been removed by ${interaction.user}`)
+							.setDescription(`Your first warn has been removed by ${interaction.user}`)
 							.setColor('#31bf4b')
 							.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/917695438885371904/590103042.jpg')
 							.setTimestamp();
 
-						target.send({ embeds: [dmembed] }).catch(O_o => console.log(O_o));
-						modlog.send({ embeds: [warnremovembed] }).catch(O_o => error.send(`${O_o}`));
+						target.send({ embeds: [dmembed] }).catch(O_o => {});
+						if(modlog) modlog.send({ embeds: [warnremovembed] }).catch(O_o => {});
 
 						return interaction.editReply({ content: `${target}s first warn removed.\n\nThey now have 1 warn`, ephemeral: true, components: [] });
 					}
@@ -154,20 +152,20 @@ module.exports = {
 
 						const warnremovembed = new Discord.MessageEmbed()
 							.setTitle(`:eyes:**Warn removed**:eyes:`)
-							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** 2\n**Warn Reason:** ${second.reason}\n\n**Removed by:** ${interaction.user}\n\n**Reason:** ${reason}\n_ _`)
+							.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.username}\n**ID:** \`${target.id}\`\n\n**Warn:** 2\n**Warn Reason:** ${second.reason}\n\n**Removed by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 							.setColor('#31bf4b')
 							.setThumbnail(target.displayAvatarURL())
 							.setTimestamp();
 
 						const dmembed = new Discord.MessageEmbed()
 							.setTitle(`Warn removed in ${interaction.guild}`)
-							.setDescription(`Your 2 warn has been removed by ${interaction.user}`)
+							.setDescription(`Your second warn has been removed by ${interaction.user}`)
 							.setColor('#31bf4b')
 							.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/917695438885371904/590103042.jpg')
 							.setTimestamp();
 
-						target.send({ embeds: [dmembed] }).catch(O_o => console.log(O_o));
-						modlog.send({ embeds: [warnremovembed] }).catch(O_o => error.send(`${O_o}`));
+						target.send({ embeds: [dmembed] }).catch(O_o => {});
+						if(modlog) modlog.send({ embeds: [warnremovembed] }).catch(O_o => {});
 
 
 						return interaction.editReply({ content: `${target}s second warn removed.\n\nThey now have 1 warn`, ephemeral: true, components: [] });
@@ -177,10 +175,11 @@ module.exports = {
 					}
 				});
 			}
+			client.login(server.token);
 		}
 		catch (O_o) {
 			console.error(O_o);
 		}
 	},
 };
-client.login(token);
+
