@@ -1,23 +1,31 @@
 /* eslint-disable no-empty-function */
 /* eslint-disable no-unused-vars */
 const Discord = require('discord.js');
-const { logsc, staffr, errorc } = require('../../../../config.json');
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('database', 'username', 'password', {
+	host: 'localhost',
+	dialect: 'sqlite',
+	logging: false,
+	storage: 'database.sqlite',
+});
+
+const Setup = require('../../../../DatabaseModels/Setup')(sequelize, Sequelize);
 
 module.exports = {
 	async execute(interaction) {
 		try {
+			const author = await interaction.guild.members.cache.get(interaction.user.id);
+			if (!author.permissions.has('KICK_MEMBERS')) return interaction.editReply({ content: `You don't have the kick members permission.`, ephemeral: true });
+
+			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
+			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
+
 			const role = await interaction.options.getRole('role');
 			const target = await interaction.options.getUser('target');
-			const author = await interaction.guild.members.cache.get(interaction.user.id);
 
-			const logs = await interaction.guild.channels.cache.get(logsc);
-			const staff = await interaction.guild.roles.cache.get(staffr);
+			const logs = await interaction.guild.channels.cache.get(server.logs_channel);
 
-			const error = await interaction.guild.channels.cache.get(errorc);
-			if (!logs) await error.send(`Logs channel not found`);
-			if (role.comparePositionTo(staff) > 0) return interaction.editReply({ content: `I'm not gonna let you do that.`, ephemeral: true });
-
-			// add role to member
 			if (target) {
 				const member = await interaction.guild.members.cache.get(target.id);
 				if (member.roles.cache.has(role.id)) return interaction.editReply({ content: `Member already has that role`, ephemeral: true });
@@ -26,12 +34,12 @@ module.exports = {
 
 				const targetembed = new Discord.MessageEmbed()
 					.setTitle(':inbox_tray:**Role Added**:inbox_tray:')
-					.setDescription(`_ _\n**Role:** ${role}\n\n**Member:** ${target}\n\n**Added by:** ${interaction.user}\n_ _`)
+					.setDescription(`_ _\n**Role:** ${role}\n\n**Member:** ${target}\n\n**Tag:** ${target.tag}\n\n**ID:** \`${target.id}\`\n\n**Added by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n_ _`)
 					.setThumbnail(target.displayAvatarURL())
 					.setColor('#00ffac')
 					.setTimestamp();
 
-				await logs.send({ embeds: [targetembed] }).catch(O_o => error.send(`${O_o}`));
+				if(logs) logs.send({ embeds: [targetembed] }).catch(O_o => {});
 
 				const dmembed = new Discord.MessageEmbed()
 					.setTitle(`Role added in ${interaction.guild}`)
@@ -52,12 +60,12 @@ module.exports = {
 
 				const authorembed = new Discord.MessageEmbed()
 					.setTitle(':inbox_tray:**Role Added**:inbox_tray:')
-					.setDescription(`_ _\n**Role:** ${role}\n\n**Member:** ${interaction.user}\n\n**Added by:** ${interaction.user}\n_ _`)
+					.setDescription(`_ _\n**Role:** ${role}\n\n**Member:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Added by:** ${interaction.user.tag}\n_ _`)
 					.setThumbnail(author.displayAvatarURL())
 					.setColor('#00ffac')
 					.setTimestamp();
 
-				await logs.send({ embeds: [authorembed] }).catch(O_o => error.send(`${O_o}`));
+				if(logs) logs.send({ embeds: [authorembed] }).catch(O_o => {});
 				return interaction.editReply({ content: `Gave you the ${role} role.`, ephemeral: true });
 			}
 		}

@@ -1,8 +1,21 @@
+/* eslint-disable no-unused-vars */
 const Discord = require('discord.js');
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('database', 'username', 'password', {
+	host: 'localhost',
+	dialect: 'sqlite',
+	logging: false,
+	storage: 'database.sqlite',
+});
+
+const Setup = require('../../../../DatabaseModels/Setup')(sequelize, Sequelize);
 
 module.exports = {
 	async execute(interaction) {
 		try {
+			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
+			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
 			const colorsembed = new Discord.MessageEmbed()
 				.setTitle(`**All precoded colors**`)
 				.setDescription(`_ _\nReact with the colored emojis, to see you options of that color\n\nWhen using the other embed commands, you can set these color names as the color option.\n_ _`)
@@ -57,10 +70,12 @@ module.exports = {
 
 			const filter = (reaction, user) => {
 				return ['💙', '❤️', '💛', '💚', '🧡', '🩰', '💜'].includes(reaction.emoji.name) && user.id === interaction.user.id;
+
 			};
 
-			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
+			await embed.awaitReactions({ filter, max:1, time: 60000, errors: ['time'] })
 				.then(collected => {
+					console.log(collected);
 					if (collected.has('💙')) {
 						embed.edit({ embeds: [blueembed] });
 					}
@@ -83,9 +98,7 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
 			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 				.then(collected => {
@@ -139,9 +152,7 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
 			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 				.then(collected => {
@@ -167,9 +178,7 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
 			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 				.then(collected => {
@@ -195,9 +204,7 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
 			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 				.then(collected => {
@@ -223,9 +230,7 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
 			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 				.then(collected => {
@@ -251,9 +256,7 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
 			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 				.then(collected => {
@@ -279,9 +282,7 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
 			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 				.then(collected => {
@@ -307,9 +308,7 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
 			await embed.awaitReactions({ filter, maxEmojis: 1, time: 60000, errors: ['time'] })
 				.then(collected => {
@@ -335,11 +334,9 @@ module.exports = {
 						embed.edit({ embeds: [purpleembed] });
 					}
 				})
-				.catch(collected => {
-					console.log(collected);
-				});
+				.catch(O_o => {});
 
-			await embed.reactions.removeAll().catch(O_o => console.log(O_o));
+			await embed.reactions.removeAll().catch(O_o => {});
 			return interaction.editReply({ content:`Hope you found something.\nIf not feel free to use this command again or make a suggestion for a new color to add.`, ephemeral: true });
 		}
 		catch (O_o) {

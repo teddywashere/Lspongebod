@@ -11,6 +11,7 @@ module.exports = {
 				.addStringOption(option => option.setName('title').setDescription('The title of your embed').setRequired(true))
 				.addStringOption(option => option.setName('description').setDescription('The main text of you embed').setRequired(true))
 				.addStringOption(option => option.setName('color').setDescription('Either a hex color like #000000, "RANDOM", or check the embed colors command').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('An additional text message that will be send above the embed'))
 				.addChannelOption(option => option.setName('channel').setDescription('A channel to send it too')),
 		)
 		.addSubcommand(subcommand =>
@@ -20,6 +21,7 @@ module.exports = {
 				.addStringOption(option => option.setName('description').setDescription('The main text of you embed').setRequired(true))
 				.addStringOption(option => option.setName('color').setDescription('Either a hex color like #000000, "RANDOM", or check the embed colors command').setRequired(true))
 				.addStringOption(option => option.setName('footer').setDescription('Set the footer').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('An additional text message that will be send above the embed'))
 				.addChannelOption(option => option.setName('channel').setDescription('A channel to send it too')),
 		)
 		.addSubcommand(subcommand =>
@@ -29,6 +31,7 @@ module.exports = {
 				.addStringOption(option => option.setName('description').setDescription('The main text of you embed').setRequired(true))
 				.addStringOption(option => option.setName('color').setDescription('Either a hex color like #000000, "RANDOM", or check the embed colors command').setRequired(true))
 				.addStringOption(option => option.setName('thumbnail').setDescription('A (not too long) image link').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('An additional text message that will be send above the embed'))
 				.addChannelOption(option => option.setName('channel').setDescription('A channel to send it too')),
 		)
 		.addSubcommand(subcommand =>
@@ -39,6 +42,7 @@ module.exports = {
 				.addStringOption(option => option.setName('color').setDescription('Either a hex color like #000000, "RANDOM", or check the embed colors command').setRequired(true))
 				.addStringOption(option => option.setName('thumbnail').setDescription('A (not too long) image link').setRequired(true))
 				.addStringOption(option => option.setName('footer').setDescription('Set the footer').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('An additional text message that will be send above the embed'))
 				.addChannelOption(option => option.setName('channel').setDescription('A channel to send it too')),
 		)
 		.addSubcommand(subcommand =>
@@ -48,6 +52,7 @@ module.exports = {
 				.addStringOption(option => option.setName('description').setDescription('The main text of you embed').setRequired(true))
 				.addStringOption(option => option.setName('color').setDescription('Either a hex color like #000000, "RANDOM", or check the embed colors command').setRequired(true))
 				.addStringOption(option => option.setName('image').setDescription('The main image link for the embed').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('An additional text message that will be send above the embed'))
 				.addChannelOption(option => option.setName('channel').setDescription('A channel to send it too')),
 		)
 		.addSubcommand(subcommand =>
@@ -58,6 +63,7 @@ module.exports = {
 				.addStringOption(option => option.setName('color').setDescription('Either a hex color like #000000, "RANDOM", or check the embed colors command').setRequired(true))
 				.addStringOption(option => option.setName('image').setDescription('The main image link for the embed').setRequired(true))
 				.addStringOption(option => option.setName('footer').setDescription('Set the footer').setRequired(true))
+				.addStringOption(option => option.setName('text').setDescription('An additional text message that will be send above the embed'))
 				.addChannelOption(option => option.setName('channel').setDescription('A channel to send it too')),
 		)
 		.addSubcommand(subcommand =>
@@ -141,7 +147,7 @@ module.exports = {
 		}
 		catch (O_o) {
 			console.error(O_o);
-			await interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
+			await interaction.followUp({ content: `\`Please screenshot and report me to Rainbow\`\n**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true }).catch(oopsie => {});
 		}
 
 	},
