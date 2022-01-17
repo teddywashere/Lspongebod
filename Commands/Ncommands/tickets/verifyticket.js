@@ -17,28 +17,26 @@ module.exports = {
 	description: 'Opens age verification ticket',
 	async execute(message) {
 		try {
-			const logger = '298822483060981760';
-			const server = Setup.findOne({ where: { guild_id: message.guild.id } });
+			const logger = '905155961180794920';
+			const server = await Setup.findOne({ where: { guild_id: message.guild.id } });
 			if (!server) return message.reply({ content: `Please do /setup error first` });
 			const member = await message.guild.members.cache.get(message.author.id);
 			const logs = await message.guild.channels.cache.get(server.logs_channel);
-			const category = await message.guild.channels.cache.get(server.opentickets_channel);
+			const category = await message.guild.channels.cache.get(server.ticketopen_channel);
 			const staff = await message.guild.roles.cache.get(server.staff_role);
 			if (!message.guild.roles.cache.get(server.everyone_role)) return message.reply({ content: 'Everyone role not found' });
 
-			if (message.guild.roles.cache.get(server.jail_role)) {
-				if (!member.roles.cache.has(server.jail_role)) return message.reply({ content: `You're not in jail so you don't need to verify` });
-			};
-
-			const ticket = Ticket.findOne({where: { user_id: message.author.id, guild_id: message.guild.id, status: 'open', type: 'verify' } });
-			if (ticket) {
-				return message.reply({ content: `You already have an open verification ticket: ${message.guild.channels.cache.get(ticket.channel_id)}` });
+			if(message.guild.roles.cache.get(server.jail_role)) {
+				if (!member.roles.cache.has(server.jail_role)) return message.reply({ content: `You're not in jail, so you dont need to verify` });
 			}
 
-			const all = await Ticket.findAll({ where: { guild_id: message.guild.id, status: 'open', type: 'verify' } });
+			const ticket = await Ticket.findOne({ where: { user_id: message.author.id, guild_id: message.guild.id, status: 'open', type: 'suggestion' } });
+			if (ticket) return message.reply({ content: `You already have an open ticket ${message.guild.channels.cache.find(ticket.channel_id)}`});
+
+			const all = await Ticket.findAll({ where: { guild_id: message.guild.id, status: 'open', type: 'support' } });
 			const array = await all.map(n => n.number);
-			const number = array.lenght + 1;
-			// make private ticket
+			const number = array.length + 1;
+
 			if (server.ticket_name === 'username') {
 				if (category) {
 					if (staff) {

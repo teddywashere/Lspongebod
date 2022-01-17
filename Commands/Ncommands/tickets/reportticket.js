@@ -20,30 +20,30 @@ module.exports = {
 			const logger = '291194093495648258';
 			const server = await Setup.findOne({ where: { guild_id: message.guild.id } });
 			if (!server) return message.reply({ content: `Please do /setup error first` });
+	
+
 			const member = await message.guild.members.cache.get(message.author.id);
 			if (!member) return message.reply('Member not found');
 			const logs = await message.guild.channels.cache.get(server.logs_channel);
-			const category = await message.guild.channels.cache.get(server.opentickets_channel);
+			const category = await message.guild.channels.cache.get(server.ticketopen_channel);
 			const tickets = await message.guild.channels.cache.get(server.ticket_channel);
 			const staff = await message.guild.roles.cache.get(server.staff_role);
-			if (server.jail_role != '0') {
-				if (!message.guild.roles.cache.get(server.jail_role)) return message.reply({ content: `Jail role not found`, ephemeral: true });
-				if (member.roles.cache.has(server.jail_role)) return message.reply({ content: `You're in jail, you can only verify.` });
-			}
-			if (!message.guild.roles.cache.get(server.everyone_role)) return message.reply({ content: `Everyone role not found`, ephemeral: true });
+			if (!message.guild.roles.cache.get(server.everyone_role)) return message.reply({ content: 'Everyone role not found' });
 
-			
+			if(message.guild.roles.cache.get(server.jail_role)) {
+				if (member.roles.cache.has(server.jail_role)) return message.reply({ content: `You're in jail so you can only verify` });
+			}
+
 			if (tickets) {
-				if (message.channel != ticketc) return message.reply({ content: `Please only use this command in ${ticketc}.\n If you try to do this again, moderators will mute you.` });
+				if (message.channel != tickets) return message.reply({ content: `Please only use this command in ${tickets}.\n If you try to do this again, moderators will mute you.` });
 			}
 
-			const channel = await Ticket.findOne({ where: { user_id: message.author.id,  type: 'report', guild_id: message.guild.id, status: 'open' } } );
-			const look = await message.guild.channel.cache.get(channel.channel_id);
-			if (channel) return message.reply(`You already have an open report ticket!\n${look}`);
+			const ticket = await Ticket.findOne({ where: { user_id: message.author.id, guild_id: message.guild.id, status: 'open', type: 'report' } });
+			if (ticket) return message.reply({ content: `You already have an open ticket ${message.guild.channels.cache.find(ticket.channel_id)}`});
 
 			const all = await Ticket.findAll({ where: { guild_id: message.guild.id, status: 'open', type: 'report' } });
 			const array = await all.map(n => n.number);
-			const number = array.lenght + 1;
+			const number = array.length + 1;
 
 			if (server.ticket_name === 'username') {
 				if (category) {
