@@ -15,6 +15,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 
 const Setup = require('../../../DatabaseModels/Setup')(sequelize, Sequelize);
 const Warns = require('../../../DatabaseModels/Warns')(sequelize, Sequelize);
+const { token } = require('../../../config.json');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -35,6 +36,8 @@ module.exports = {
 		try {
 			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
 			if (!server) return interaction.reply({ content: `Please do /setup error first` });
+			client.login(server.token);
+
 			// MEMBER
 			if (interaction.options.getSubcommand() === 'member') {
 				await interaction.reply({ content: `Searching...`, ephemeral: true });
@@ -61,11 +64,12 @@ module.exports = {
 				await interaction.reply({ content: `Searching...`, ephemeral: true });
 
 				const id = await interaction.options.getString('id');
-				const user = await client.users.fetch(id).catch ((O_o) => {
-					return interaction.followUp({ content: `**Something went wrong... Sorry**\n${O_o}!`, ephemeral: true });
-				});
+				const user = await client.users.fetch(id).catch(error => { 
+					if (error.name === 'DiscordAPIError') { return interaction.followUp({ content: 'Can confirm, you got the id wrong.', ephemeral: true });}
+				})
+				if (!user) return;
 				const banmap = await interaction.guild.bans.fetch();
-				const warns = await Warns.findAll({ where: { user_id: member.id, guild_id: interaction.guild.id } });
+				const warns = await Warns.findAll({ where: { user_id: id, guild_id: interaction.guild.id } });
 				const warnmap = await warns.map(w => w.user_id);
 
 				const idembed = new Discord.MessageEmbed()
@@ -89,7 +93,7 @@ module.exports = {
 					await interaction.editReply({ embeds: [bannedembed] });
 				}
 			}
-			client.login(server.token);
+			
 		}
 		catch (O_o) {
 			console.error(O_o);
