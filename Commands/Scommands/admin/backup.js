@@ -29,7 +29,7 @@ module.exports = {
 			const logs = await interaction.guild.channels.cache.get(server.logs_channel);
 
 			const templates = await interaction.guild.fetchTemplates();
-			const backup = await templates.get(server.template);
+			const backup = await templates.get(server.server_template);
 			if (!backup) return interaction.editReply({ content: `You need to run /setup other and set up a server template first` });
 
 			if (backup) {
@@ -38,7 +38,7 @@ module.exports = {
 
 				const logsembed = new Discord.MessageEmbed()
 					.setTitle(`:dvd:**Server Backup**:dvd:`)
-					.setDescription(`_ _\n${member} backed up the server\n\nBackup template: "https://discord.new/${server.template}"\n_ _`)
+					.setDescription(`_ _\n${member} backed up the server\n\nBackup template: "https://discord.new/${server.server_template}"\n_ _`)
 					.setColor('#b68f00')
 					.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/912633025928515644/Screenshot_20211123-101728_1.png')
 					.setTimestamp();
