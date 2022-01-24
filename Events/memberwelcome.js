@@ -13,15 +13,21 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 const Setup = require('../DatabaseModels/Setup')(sequelize, Sequelize);
 
 module.exports = {
-	name: 'guildMemberAdd',
-	async execute(member) {
-		const server = await Setup.findOne({ where: { guild_id: member.guild.id }});
+	name: 'messageCreate',
+	async execute(message) {
+		// 826516800337870868 verify rainbow
+		if (message.channel.id != '825026088681078834') return;
+		if (message.content != 'I am a friend') return;
+		const server = await Setup.findOne({ where: { guild_id: message.guild.id }});
         if (!server) return;
-        const general = await member.guild.channels.cache.get(server.general_chat);
+        const general = await message.guild.channels.cache.get(server.general_chat);
         if (!general) return;
         let heartEmoji = client.emojis.cache.get('760199043875602511');
+		await general.send({ content: `${message.author} **Welcome Home** <:rainbowheart:760199043875602511>\n\nCheck out <#795340018213584916> , <#814231713857273856> and <#795340377443008533>\nAnd subscribe to the <#814231261719298079> for fun stuff!` });
+				
+		
 
-		general.send({ content: `${member} **Welcome Home** <:rainbowheart:760199043875602511>\n\nCheck out <#814231713857273856> and <#795340377443008533>\nAnd subscribe to the <#814231261719298079> for fun stuff!` });
+		
 
         client.login(server.token);
 	},
