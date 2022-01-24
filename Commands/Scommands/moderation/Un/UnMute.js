@@ -45,7 +45,7 @@ module.exports = {
 
 			const unmuteembed = new Discord.MessageEmbed()
 				.setTitle(`:grinning:**Member Unmuted**:grinning:`)
-				.setDescription(`_ _\n**Member:** ${target}\n\n**Tag:** ${target.tag}\n\n**ID:** \`${target.id}\`\n\n**Unmuted by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n**Reason:** ${reason}\n_ _`)
+				.setDescription(`_ _\n**Member:** ${target}\n\n**Tag:** ${target.tag}\n\n**ID:** \`${target.id}\`\n\n**Unmuted by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 				.setColor('#009fff')
 				.setThumbnail(target.displayAvatarURL())
 				.setTimestamp();

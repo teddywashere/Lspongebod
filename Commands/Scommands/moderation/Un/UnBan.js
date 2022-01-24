@@ -29,25 +29,19 @@ module.exports = {
 
 			const banmap = await interaction.guild.bans.fetch();
 
-			const user = await client.users.fetch(id).catch ((O_o) => {
-				return interaction.followUp({ content: `**Couldnt find this user anywhere on discord...**`, ephemeral: true });
-			});
-			if (!user) return;
 			if (!banmap.get(id)) return interaction.editReply({ content:`This user is not banned.`, ephemeral: true });
 
-			await interaction.guild.members.unban(id);
+			await interaction.guild.members.unban(id).catch(O_o => {});
 
-			const target = client.users.fetch(id);
 			const unbanembed = new Discord.MessageEmbed()
 				.setTitle(`:flag_white:**User Unbanned**:flag_white:`)
-				.setDescription(`_ _\n**User:** \`${id}\`\n**Tag:** ${target.tag}\n**Unbanned by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
+				.setDescription(`_ _\n**User:** \`${id}\`\n**Unbanned by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 				.setColor('#ffd000')
 				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/911568145754497064/unban.jpg')
 				.setTimestamp();
 
 			if(modlog) modlog.send({ embeds: [unbanembed] }).catch(O_o => {});
 
-			client.login(server.token);
 			return interaction.editReply({ content: `${id} has been unbanned.`, ephemeral: true });
 		}
 		catch (O_o) {
