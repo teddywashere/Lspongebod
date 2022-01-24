@@ -20,7 +20,7 @@ module.exports = {
 		.setName('mute')
 		.setDescription('(STAFF) Mutes a member')
 		.setDefaultPermission(false)
-		.addUserOption(option => option.setName('target').setDescription('Member to mute').setRequired(true))
+		.addUserOption(option => option.setName('member').setDescription('Member to mute').setRequired(true))
 		.addStringOption(option => option.setName('reason').setDescription('Reason for mute').setRequired(true)),
 	async execute(interaction) {
 		try {
@@ -31,7 +31,7 @@ module.exports = {
 			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
 			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
 	
-			const target = await interaction.options.getUser('target');
+			const target = await interaction.options.getUser('member');
 			const reason = await interaction.options.getString('reason');
 
 			const modlog = await interaction.guild.channels.cache.get(server.modlog_channel);
@@ -57,7 +57,7 @@ module.exports = {
 			// send modlog, criminals and interaction reply
 			const muteembed = new Discord.MessageEmbed()
 				.setTitle(`:zipper_mouth:**Member Muted**:zipper_mouth:`)
-				.setDescription(`_ _\n**Member:** ${target}\n**Tag:** ${target.tag}\n**ID:** \`${target.id}\`\n\n**Muted by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
+				.setDescription(`_ _\n**Member:** ${target}\n\n**Tag:** ${target.tag}\n\n**ID:** \`${target.id}\`\n\n**Muted by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 				.setColor('#b600ff')
 				.setThumbnail(target.displayAvatarURL())
 				.setTimestamp();

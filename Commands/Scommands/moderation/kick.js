@@ -19,14 +19,14 @@ module.exports = {
 		.setName('kick')
 		.setDescription('(STAFF) Kick a member.')
 		.setDefaultPermission(false)
-		.addUserOption(option => option.setName('target').setDescription('The member to kick').setRequired(true))
+		.addUserOption(option => option.setName('member').setDescription('The member to kick').setRequired(true))
 		.addStringOption(option => option.setName('reason').setDescription('The reason for being kicked').setRequired(true)),
 	async execute(interaction) {
 		try {
 			await interaction.reply({ content: `Kicking...`, ephemeral: true });
 			const server = await Setup.findOne({ where: { guild_id: interaction.guild.id } });
 			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
-			const target = await interaction.options.getUser('target');
+			const target = await interaction.options.getUser('member');
 			const reason = await interaction.options.getString('reason');
 
 			const modlog = await interaction.guild.channels.cache.get(server.modlog_channel);
@@ -56,7 +56,7 @@ module.exports = {
 				.setTitle(':anger:**Member Kicked**:anger:')
 				.setColor('#ff6800')
 				.setThumbnail(target.displayAvatarURL())
-				.setDescription(`_ _\n**Member:** ${target}\n\n**ID:** \`${target.id}\` \n \n**Kicked by:** ${interaction.user} \n \n**Reason:** ${reason}\n_ _`)
+				.setDescription(`_ _\n**Member:** ${target}\n\n**Tag:** ${target.tag}\n\n**ID:** \`${target.id}\` \n \n**Kicked by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\` \n \n**Reason:** ${reason}\n_ _`)
 				.setTimestamp();
 
 			if(modlog) modlog.send({ embeds: [kickembed] }).catch(O_o => {});
@@ -64,7 +64,7 @@ module.exports = {
 			// send Criminals
 			const ripembed = new Discord.MessageEmbed()
 				.setTitle(`**\`${rip}\` has been kicked**`)
-				.setDescription(`**Reason:** ${reason}\n_ _`)
+				.setDescription(`_ _\n**Reason:** ${reason}\n_ _`)
 				.setColor('#ff6800')
 				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/911659304443072612/c2823fe7a42bd0d578302c185bc241d0b32a4877a36008c36f2dbe47606ae717.jpg')
 				.setTimestamp();
