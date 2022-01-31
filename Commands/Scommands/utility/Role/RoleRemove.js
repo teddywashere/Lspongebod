@@ -22,7 +22,7 @@ module.exports = {
 			if (!server) return interaction.editReply({ content: `Please do /setup error first` });
 
 			const role = await interaction.options.getRole('role');
-			const target = await interaction.options.getUser('target');
+			const target = await interaction.options.getUser('member');
 			const logs = await interaction.guild.channels.cache.get(server.logs_channel);
 
 			if (target) {
