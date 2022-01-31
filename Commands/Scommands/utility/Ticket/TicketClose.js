@@ -50,15 +50,29 @@ module.exports = {
 				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/912725753131593758/Screenshot_20211123-162443_1.png')
 				.setTimestamp();
 
-			const tclosedembed = new Discord.MessageEmbed()
+			const nomemclosedembed = new Discord.MessageEmbed()
 				.setTitle(`:file_cabinet:**Ticket Closed**:file_cabinet:`)
-				.setDescription(`_ _\n**Ticket:** ${thetick}\n\n**Ticket name:**${thetick.name}\n\n**Closed by:** ${author}\n\n**Tag:** ${author.tag}\n\n**ID:** \`${author.id}\`\n\n**Opened by:** ${member}\n\n**Tag:** ${member.tag}\n\n**ID:** \`${member.id}\`\n\n**Reason:** ${reason}\n_ _`)
+				.setDescription(`_ _\n**Ticket:** ${thetick}\n\n**Ticket name:**${thetick.name}\n\n**Closed by:** ${author}\n\n**Tag:** ${author.tag}\n\n**ID:** \`${author.id}\`\n\n**Opened by:** ???\n\n**Tag:** ???\n\n**ID:** \`???\`\n\n**Reason:** ${reason}\n_ _`)
 				.setColor('#572eff')
 				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/912725753131593758/Screenshot_20211123-162443_1.png')
 				.setTimestamp();
 
-			await member.send({ embeds: [dmembed] }).catch(O_o => {});
-			if(logs) logs.send({ embeds: [tclosedembed] }).catch(O_o => {});
+			if (member) await member.send({ embeds: [dmembed] }).catch(O_o => {});
+			if (logs) {
+				if (member) {
+
+					const memclosedembed = new Discord.MessageEmbed()
+						.setTitle(`:file_cabinet:**Ticket Closed**:file_cabinet:`)
+						.setDescription(`_ _\n**Ticket:** ${thetick}\n\n**Ticket name:**${thetick.name}\n\n**Closed by:** ${author}\n\n**Tag:** ${author.tag}\n\n**ID:** \`${author.id}\`\n\n**Opened by:** ${member}\n\n**Tag:** ${member.tag}\n\n**ID:** \`${member.id}\`\n\n**Reason:** ${reason}\n_ _`)
+						.setColor('#572eff')
+						.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/912725753131593758/Screenshot_20211123-162443_1.png')
+						.setTimestamp();
+					logs.send({ embeds: [memclosedembed] }).catch(O_o => {});
+				}
+				if (!member) {
+					logs.send({ embeds: [nomemclosedembed]}).catch(O_o => {});
+				}
+			} 
 			await ticket.update({ where: { status: 'closed' } });
 
 			return interaction.editReply({ content: `Ticket closed`, ephemeral: true });
