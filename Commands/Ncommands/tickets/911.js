@@ -20,14 +20,14 @@ module.exports = {
 		try {
             // if (message.guild.id != '') return;
             // me is client id()
-            const me = '825349710368997446';
-            const logger = '926607829475917925';
-            const friendr = '826501510996164659';
-            const staffr = '788797220429758534';
-            const adminr = '788797386515808339';
-            const muter = '828002356150927390';
-            const everyoner = '788794708087275550';
-            const modlogc = await message.guild.channels.cache.get('825026359533371424')
+            const me = '';
+            const logger = '';
+            const friendr = '';
+            const staffr = '';
+            const adminr = '';
+            const muter = '';
+            const everyoner = '';
+            const modlogc = await message.guild.channels.cache.get('')
 
             const author = await message.guild.members.cache.get(message.author.id);
 
