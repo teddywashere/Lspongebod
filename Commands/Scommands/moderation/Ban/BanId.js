@@ -12,6 +12,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 const Setup = require('../../../../DatabaseModels/Setup')(sequelize, Sequelize);
+const { token } = require('../../../../config.json');
 
 module.exports = { 
 	async execute(interaction) {
@@ -40,13 +41,14 @@ module.exports = {
 
 			const target = await client.users.fetch(id).catch(error => { 
 				if (error.name === 'DiscordAPIError') { return interaction.followUp({ content: 'Can confirm, you got the id wrong.', ephemeral: true });}
-			})
-			if (!target) return;
+				console.error(error);
+			});
+
 			const idembed = new Discord.MessageEmbed()
 				.setTitle(`:name_badge:**User Banned**:name_badge:`)
 				.setDescription(`_ _\n\n**Tag:** ${target.tag}\n\n**ID:** \`${id}\`\n\n**Banned by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 				.setColor('#ff0052')
-				.setThumbnail(target.displayAvatarURL())
+				.setThumbnail(target.displayAvatarURL() || 'https://cdn.discordapp.com/attachments/772471934231117834/911567635844595722/banhammer.jpg')
 				.setTimestamp();
 
 			const idcrime = new Discord.MessageEmbed()
@@ -59,7 +61,6 @@ module.exports = {
 			if(modlog) modlog.send({ embeds: [idembed] }).catch(O_o => {});
 			if(criminals) criminals.send({ embeds: [idcrime] }).catch(O_o => {});
 
-			client.login(server.token);
 			return interaction.editReply({ content: `\`${id}\` has been banned`, ephemeral: true });
 		}
 		catch (O_o) {
@@ -70,3 +71,4 @@ module.exports = {
 		}
 	},
 };
+client.login(token);
