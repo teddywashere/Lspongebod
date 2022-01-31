@@ -13,6 +13,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 });
 
 const Setup = require('../../../../DatabaseModels/Setup')(sequelize, Sequelize);
+const { token } = require('../../../../config.json');
 
 module.exports = {
 	async execute(interaction) {
@@ -33,11 +34,16 @@ module.exports = {
 
 			await interaction.guild.members.unban(id).catch(O_o => {});
 
+			const target = await client.users.fetch(id).catch(error => { 
+				if (error.name === 'DiscordAPIError') { return interaction.followUp({ content: 'Can confirm, you got the id wrong.', ephemeral: true });}
+				console.error(error);
+			});
+
 			const unbanembed = new Discord.MessageEmbed()
 				.setTitle(`:flag_white:**User Unbanned**:flag_white:`)
-				.setDescription(`_ _\n**User:** \`${id}\`\n**Unbanned by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
+				.setDescription(`_ _\n**Tag:** ${target.tag}\n\n**User:** \`${id}\`\n\n**Unbanned by:** ${interaction.user}\n\n**Tag:** ${interaction.user.tag}\n\n**ID:** \`${interaction.user.id}\`\n\n**Reason:** ${reason}\n_ _`)
 				.setColor('#ffd000')
-				.setThumbnail('https://cdn.discordapp.com/attachments/772471934231117834/911568145754497064/unban.jpg')
+				.setThumbnail( target.displayAvatarURL() ||'https://cdn.discordapp.com/attachments/772471934231117834/911568145754497064/unban.jpg')
 				.setTimestamp();
 
 			if(modlog) modlog.send({ embeds: [unbanembed] }).catch(O_o => {});
@@ -49,3 +55,4 @@ module.exports = {
 		}
 	},
 };
+client.login(token);
