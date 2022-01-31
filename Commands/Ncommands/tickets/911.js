@@ -1,5 +1,3 @@
-
-
 const { Permissions } = require('discord.js');
 
 const Discord = require('discord.js');
