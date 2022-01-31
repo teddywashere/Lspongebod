@@ -15,8 +15,7 @@ const Setup = require('../DatabaseModels/Setup')(sequelize, Sequelize);
 module.exports = {
 	name: 'messageCreate',
 	async execute(message) {
-		// 826516800337870868 verify rainbow
-		if (message.channel.id != '825026088681078834') return;
+		if (message.channel.id != '826516800337870868') return;
 		if (message.content != 'I am a friend') return;
 		const server = await Setup.findOne({ where: { guild_id: message.guild.id }});
         if (!server) return;
