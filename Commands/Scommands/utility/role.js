@@ -10,14 +10,14 @@ module.exports = {
 				.setName('add')
 				.setDescription('(STAFF) Add a role to yourself or a user, no target if you want to add it to yourself')
 				.addRoleOption(options => options.setName('role').setDescription('The role to add').setRequired(true))
-				.addUserOption(options => options.setName('target').setDescription('The user to add the role to')),
+				.addUserOption(options => options.setName('member').setDescription('The member to add the role to')),
 		)
 		.addSubcommand(subcommand =>
 			subcommand
 				.setName('remove')
 				.setDescription('(STAFF) Remove a role from yourself or a user,no target if you want to remove it from youself')
 				.addRoleOption(options => options.setName('role').setDescription('The role to remove').setRequired(true))
-				.addUserOption(options => options.setName('target').setDescription('The user to remove the role from')),
+				.addUserOption(options => options.setName('member').setDescription('The member to remove the role from')),
 		),
 	async execute(interaction) {
 		try {
